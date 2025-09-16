@@ -18,7 +18,8 @@
         "name": "next"
       }
     ],
-    "paths": {
+    "baseUrl": ".",             // 👈 add this
+    "paths": {                  // 👈 and this
       "@/*": ["./src/*"]
     }
   },
