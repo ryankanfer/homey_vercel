@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
+
 export async function GET() {
-  const { data, error } = await supabase.from('profiles').select('id').limit(1);
-  return NextResponse.json({ ok: !error, rows: data?.length ?? 0 });
+  const { count, error } = await supabaseAdmin
+    .from('profiles')
+    .select('id', { count: 'exact', head: true });
+  return NextResponse.json({ ok: !error, rows: count ?? 0 });
 }
