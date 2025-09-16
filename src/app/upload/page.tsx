@@ -1,7 +1,13 @@
 'use client';
 import { useState } from 'react';
 
-type ApiOut = { ok: boolean; [k: string]: unknown } | null;
+type ApiDoc = {
+  id: string;
+  title: string;
+  key: string; // cleaned key (e.g., "test.txt")
+};
+
+type ApiOut = { ok: boolean; data?: ApiDoc[]; [k: string]: unknown } | null;
 
 export default function UploadPage() {
   const [key, setKey] = useState('test.txt');
@@ -25,11 +31,41 @@ export default function UploadPage() {
   return (
     <main style={{ padding: 24 }}>
       <h1>Upload demo</h1>
-      <input value={key} onChange={e => setKey(e.target.value)} placeholder="key" style={{ display:'block', margin:'8px 0', width: 360 }} />
-      <textarea value={content} onChange={e => setContent(e.target.value)} rows={6} style={{ display:'block', width: 360 }} />
+      <input
+        value={key}
+        onChange={e => setKey(e.target.value)}
+        placeholder="key"
+        style={{ display: 'block', margin: '8px 0', width: 360 }}
+      />
+      <textarea
+        value={content}
+        onChange={e => setContent(e.target.value)}
+        rows={6}
+        style={{ display: 'block', width: 360 }}
+      />
       <button onClick={send}>Upload</button>
       <button onClick={list} style={{ marginLeft: 8 }}>List documents</button>
-      <pre style={{ marginTop:16 }}>{out ? JSON.stringify(out, null, 2) : null}</pre>
+
+      <div style={{ marginTop: 24 }}>
+        {out?.data && Array.isArray(out.data) ? (
+          <ul>
+            {out.data.map(doc => (
+              <li key={doc.id}>
+                {doc.title}{' '}
+                <a
+                  href={`/api/files/${encodeURIComponent(doc.key)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Download
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <pre style={{ marginTop: 16 }}>{out ? JSON.stringify(out, null, 2) : null}</pre>
+        )}
+      </div>
     </main>
   );
 }

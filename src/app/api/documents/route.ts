@@ -8,5 +8,11 @@ export async function GET() {
     .order('created_at', { ascending: false })
     .limit(20);
 
-  return NextResponse.json({ ok: !error, data, error: error?.message ?? null });
+  // Strip the "r2://bucket-name/" prefix
+  const clean = data?.map(d => ({
+    ...d,
+    key: d.r2_key.replace(/^r2:\/\/[^/]+\//, ''),
+  })) ?? [];
+
+  return NextResponse.json({ ok: !error, data: clean, error: error?.message ?? null });
 }
